@@ -1,0 +1,3 @@
+# קבצי המודל הגדולים מתפרסמים כ-GitHub Release assets — לא מקמיטים אותם לריפו
+# (מגבלת git ~100MB לקובץ; Releases עד 2GB).
+*.onnx

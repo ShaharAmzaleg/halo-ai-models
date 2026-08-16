@@ -1,0 +1,15 @@
+{
+  "manifestVersion": 1,
+  "variants": [
+    {
+      "id": "multi_all",
+      "languages": ["*"],
+      "modelVersion": 1,
+      "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-v1/model_int8.onnx",
+      "tokenizerUrl": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-v1/tokenizer.json",
+      "sizeBytes": 135908348,
+      "sha256": "52e703cb3d8a3aac8c5d35a350dbc20fd5f0a54b00f01b4b88fc5bb2052f7700",
+      "toxicIndex": 1
+    }
+  ]
+}
