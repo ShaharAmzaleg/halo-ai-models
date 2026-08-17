@@ -2,8 +2,20 @@
   "manifestVersion": 1,
   "variants": [
     {
+      "id": "he",
+      "languages": ["he", "en"],
+      "modelType": "bert",
+      "modelVersion": 1,
+      "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v1/model_int8.onnx",
+      "tokenizerUrl": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v1/tokenizer.json",
+      "sizeBytes": 185187815,
+      "sha256": "32a4b5cd9a913aeb6e01bbf84c96f2c22c3a4da17d78833084e37d8cada199e0",
+      "toxicIndex": 1
+    },
+    {
       "id": "multi_all",
       "languages": ["*"],
+      "modelType": "distilbert",
       "modelVersion": 1,
       "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-v1/model_int8.onnx",
       "tokenizerUrl": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-v1/tokenizer.json",
