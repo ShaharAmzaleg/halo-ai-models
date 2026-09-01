@@ -1,0 +1,33 @@
+name: Collect feedback
+
+# יוצר קובץ סקירה חדש (pending_feedback.csv) מהמשובים שהורים סימנו ושחלון 7 הימים שלהם נסגר.
+# רץ שבועי (ניתן לשנות ב-cron) + הפעלה ידנית. אחרי הריצה — פתח את pending_feedback.csv,
+# מלא את עמודת decision (1/0 לאישור/תיקון, ריק=דחייה), ואז הפעל את "Train model".
+on:
+  schedule:
+    - cron: '0 3 * * 1'    # יום שני 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -q firebase-admin
+      - name: Collect feedback into pending_feedback.csv
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: python collect_feedback.py
+      - name: Commit review file
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add pending_feedback.csv
+          git commit -m "chore: pending feedback for review" || echo "no changes"
+          git push

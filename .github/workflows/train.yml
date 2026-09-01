@@ -1,0 +1,49 @@
+name: Train model
+
+# מריץ את פייפליין האימון: ממזג משוב מאושר → מאמן → שער-איכות → מפרסם (אם עבר).
+# הפעלה ידנית (אחרי שאישרת את pending_feedback.csv) + cron שבועי אופציונלי.
+on:
+  workflow_dispatch:
+  # להפעלה אוטומטית שבועית — הסר את ההערה (מומלץ להשאיר ידני עד שסומכים על השער):
+  # schedule:
+  #   - cron: '0 5 * * 1'
+
+permissions:
+  contents: write
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install -q "transformers>=4.44" "datasets>=2.20" onnx onnxruntime onnxscript evaluate scikit-learn accelerate pandas torch
+
+      - name: Apply approved feedback → feedback.csv
+        run: python apply_feedback.py
+
+      - name: Train (DictaBERT fine-tune → ONNX INT8)
+        run: python train_hebrew.py
+
+      - name: Quality gate
+        run: python evaluate.py
+
+      - name: Publish (Release + manifest bump)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python publish.py
+          TAG=$(cat release_tag.txt)
+          gh release create "$TAG" out/model_int8.onnx out/tokenizer.json \
+            --title "$TAG" --notes "אומן אוטומטית + עבר שער-איכות"
+          cp eval/new_f1.txt eval/baseline_f1.txt 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add manifest.json feedback.csv pending_feedback.csv eval/baseline_f1.txt
+          git commit -m "release: $TAG (auto-trained, feedback applied)" || echo "no changes"
+          git push
