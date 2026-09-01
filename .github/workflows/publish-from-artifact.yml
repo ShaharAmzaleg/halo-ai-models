@@ -1,0 +1,55 @@
+name: Publish from trained model
+
+# מריץ שער-איכות + פרסום על מודל שכבר אומן (artifact "trained-model" מריצת "Train model"),
+# בלי אימון מחדש. שימושי אם evaluate/publish נכשלו על באג טכני (למשל CSV לא תקין) —
+# מתקנים את הבאג, ומריצים כאן עם ה-run id של האימון שהצליח.
+#
+# איך למצוא run id: Actions → "Train model" → הריצה הרצויה → מזהה מופיע ב-URL (…/runs/<RUN_ID>).
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Run ID של ריצת "Train model" שיצרה את trained-model'
+        required: true
+
+permissions:
+  contents: write
+  actions: read      # נדרש להורדת artifact מריצה אחרת
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps (eval only — בלי torch/אימון)
+        run: pip install -q onnxruntime numpy
+
+      - name: Download trained model artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: trained-model
+          path: out
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Quality gate
+        run: python evaluate.py
+
+      - name: Publish (Release + manifest bump)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python publish.py
+          TAG=$(cat release_tag.txt)
+          gh release create "$TAG" out/model_int8.onnx out/tokenizer.json \
+            --title "$TAG" --notes "פורסם ממודל שמור (בלי אימון מחדש) + עבר שער-איכות"
+          cp eval/new_f1.txt eval/baseline_f1.txt 2>/dev/null || true
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add manifest.json eval/baseline_f1.txt
+          git commit -m "release: $TAG (published from artifact)" || echo "no changes"
+          git push

@@ -30,6 +30,17 @@ jobs:
       - name: Train (DictaBERT fine-tune → ONNX INT8)
         run: python train_hebrew.py
 
+      # שומר את המודל המאומן כ-artifact מיד — כך אם שער-האיכות/פרסום ייכשלו על באג טכני,
+      # אפשר להריץ "Publish from trained model" עם ה-run id הזה בלי לאמן מחדש (~שעתיים).
+      - name: Upload trained model artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model
+          path: |
+            out/model_int8.onnx
+            out/tokenizer.json
+          retention-days: 14
+
       - name: Quality gate
         run: python evaluate.py
 
