@@ -3,18 +3,23 @@
   "variants": [
     {
       "id": "he",
-      "languages": ["he", "en"],
+      "languages": [
+        "he",
+        "en"
+      ],
       "modelType": "bert",
-      "modelVersion": 4,
-      "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v4/model_int8.onnx",
-      "tokenizerUrl": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v4/tokenizer.json",
+      "modelVersion": 5,
+      "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v5/model_int8.onnx",
+      "tokenizerUrl": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v5/tokenizer.json",
       "sizeBytes": 185187815,
-      "sha256": "c04e8bd9132cd17f4ed89414c4a044f9548147f50ade7d925f4b2beda92ac8bf",
+      "sha256": "128fa32badbd242217f88baf27b2894765da21a22b5ae012de7e25c56d9a2598",
       "toxicIndex": 1
     },
     {
       "id": "multi_all",
-      "languages": ["*"],
+      "languages": [
+        "*"
+      ],
       "modelType": "distilbert",
       "modelVersion": 1,
       "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-v1/model_int8.onnx",
