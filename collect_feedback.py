@@ -57,13 +57,29 @@ def main():
         seen.add((text, label))
         rows.append((text, label))
 
+    # צבירה (לא דריסה): קוראים את ה-pending הקיים כדי לא לאבד משוב משבוע קודם שטרם עובד,
+    # ומוסיפים רק שורות חדשות (dedup לפי טקסט). עריכות decision קיימות נשמרות.
+    # (אחרי אימון, apply_feedback.py מרוקן את pending → ה-collect הבא מתחיל נקי.)
+    existing, existing_texts = [], set()
+    if os.path.exists(OUT):
+        with open(OUT, encoding="utf-8") as f:
+            r = csv.reader(f); next(r, None)
+            for row in r:
+                if len(row) >= 3 and row[0].strip():
+                    existing.append((row[0], row[1], row[2])); existing_texts.add(row[0].strip())
+
+    added = 0
     with open(OUT, "w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
         w.writerow(["text", "suggested_label", "decision"])
-        for text, label in rows:
+        for t, sl, dec in existing:                       # קודם הקיימים (עם העריכות שלך)
+            w.writerow([t, sl, dec])
+        for text, label in rows:                          # ואז החדשים בלבד
+            if text.strip() in existing_texts:
+                continue
             # decision ממולא מראש לפי הצעת ההורה — אתה משנה רק חריגים (הפוך 0↔1 / רוקן לדחייה).
-            w.writerow([text, label, label])
-    print(f"wrote {len(rows)} pending rows -> {OUT}")
+            w.writerow([text, label, label]); added += 1
+    print(f"appended {added} new rows (kept {len(existing)} existing) -> {OUT}")
 
     # סימון כמעובד (בbatches של 400 — מגבלת Firestore)
     batch, n = db.batch(), 0
