@@ -7,6 +7,10 @@ on:
   schedule:
     - cron: '0 3 * * 1'    # יום שני 03:00 UTC
   workflow_dispatch:
+    inputs:
+      min_age_days:
+        description: 'אסוף רק משוב ישן מ-N ימים (7=רגיל, 0=כולל טרי לבדיקה)'
+        default: '7'
 
 permissions:
   contents: write
@@ -23,6 +27,7 @@ jobs:
       - name: Collect feedback into pending_feedback.csv
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FEEDBACK_MIN_AGE_DAYS: ${{ github.event.inputs.min_age_days || '7' }}
         run: python collect_feedback.py
       - name: Commit review file
         run: |

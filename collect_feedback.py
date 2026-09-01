@@ -14,7 +14,9 @@ import csv, json, os, re, time
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-WINDOW_MS = 7 * 24 * 3600 * 1000   # חלון עריכת המשוב — אוספים רק אחרי שנסגר
+# חלון עריכת המשוב — אוספים רק אחרי שנסגר (התווית סופית). ברירת מחדל 7 ימים;
+# ניתן לעקוף להרצת-בדיקה ע"י FEEDBACK_MIN_AGE_DAYS=0 (input ב-workflow).
+WINDOW_MS = int(os.environ.get("FEEDBACK_MIN_AGE_DAYS", "7")) * 24 * 3600 * 1000
 OUT = "pending_feedback.csv"
 
 
