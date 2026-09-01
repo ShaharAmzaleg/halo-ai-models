@@ -61,7 +61,8 @@ def main():
         w = csv.writer(f)
         w.writerow(["text", "suggested_label", "decision"])
         for text, label in rows:
-            w.writerow([text, label, ""])
+            # decision ממולא מראש לפי הצעת ההורה — אתה משנה רק חריגים (הפוך 0↔1 / רוקן לדחייה).
+            w.writerow([text, label, label])
     print(f"wrote {len(rows)} pending rows -> {OUT}")
 
     # סימון כמעובד (בbatches של 400 — מגבלת Firestore)
