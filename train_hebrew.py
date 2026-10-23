@@ -11,7 +11,7 @@
 import os, json, hashlib, shutil
 import numpy as np
 import torch
-from datasets import load_dataset, Dataset, concatenate_datasets
+from datasets import load_dataset, Dataset, concatenate_datasets, Value
 from transformers import (AutoTokenizer, AutoModelForSequenceClassification,
                           TrainingArguments, Trainer, DataCollatorWithPadding)
 from sklearn.metrics import f1_score, accuracy_score
@@ -92,7 +92,9 @@ def normalize(d):
         d = d.rename_columns({label_col: "label"})
     d = d.select_columns(["text", "label"])
     d = d.map(lambda r: {"text": str(r["text"]).strip(), "label": int(r["label"])})
-    return d.filter(lambda r: len(r["text"]) > 0)
+    d = d.filter(lambda r: len(r["text"]) > 0)
+    # מאחדים טיפוסים: CSV דרך pandas עלול לתת large_string → כשל בהשרשור מול string.
+    return d.cast_column("text", Value("string")).cast_column("label", Value("int64"))
 
 
 def augment_punctuation(ds):
