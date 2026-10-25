@@ -8,11 +8,11 @@
         "en"
       ],
       "modelType": "bert",
-      "modelVersion": 8,
-      "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v8/model_int8.onnx",
-      "tokenizerUrl": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v8/tokenizer.json",
+      "modelVersion": 9,
+      "url": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v9/model_int8.onnx",
+      "tokenizerUrl": "https://github.com/ShaharAmzaleg/halo-ai-models/releases/download/models-he-v9/tokenizer.json",
       "sizeBytes": 185187815,
-      "sha256": "d97cd68a4bf3a2516d598fd1ebc2ae21dbbfb0953fe7b2014b21a8bae3e534ac",
+      "sha256": "4dcc13005bcce29399c8d2b077a4e06f18a94764a052e5256f0e24e2bf9be5ae",
       "toxicIndex": 1
     },
     {
