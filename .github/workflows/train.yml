@@ -5,8 +5,8 @@ name: Train model
 on:
   workflow_dispatch:
   # להפעלה אוטומטית שבועית — הסר את ההערה (מומלץ להשאיר ידני עד שסומכים על השער):
-  # schedule:
-  #   - cron: '0 5 * * 1'
+   schedule:
+     - cron: '0 3 * * 2'
 
 permissions:
   contents: write
